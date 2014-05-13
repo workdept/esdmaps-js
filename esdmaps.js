@@ -1,3 +1,9 @@
+/**
+ * esdmaps.js v0.0.1
+ *
+ * A simple JavaScript libary to generate web maps for Excellent Schools
+ * Detroit.
+ */
 (function(root, factory) {
   if (typeof exports !== 'undefined') {
     // @todo: Support node?
@@ -129,6 +135,25 @@
     }
   }
 
+  function addPointLayer(map, url, options) {
+    getJSON(url, function(data) {
+      L.geoJson(data, {
+        pointToLayer: L.mapbox.marker.style,
+        style: function(feature) { return feature.properties; },
+        onEachFeature: function(feature, layer) {
+          if (typeof options.popupTemplate === "string") {
+            layer.bindPopup(L.mapbox.template(options.popupTemplate, feature.properties));
+          }
+          else if (typeof options.popupTemplate === "function") {
+            layer.bindPopup(options.popupTemplate(feature.properties)); 
+          }
+        }
+      }).addTo(map);
+    });
+
+    return map;
+  }
+
   ESDMaps.map = function(element, _, options) {
     options = options || {};
     var preset = getPreset(_);
@@ -139,19 +164,14 @@
       return L.mapbox.map(element, _, options);
     }
 
-    options = defaults(options, pick(preset, ['zoom', 'center']));
+    options = defaults(options, pick(preset, ['zoom', 'center', 'popupTemplate', 'pointsUrl']));
     map = L.mapbox.map(element, preset.mapboxId, options);
+
     initAltPopup(map, options);
 
-    getJSON(preset.points, function(data) {
-      L.geoJson(data, {
-        pointToLayer: L.mapbox.marker.style,
-        style: function(feature) { return feature.properties; },
-        onEachFeature: function(feature, layer) {
-          layer.bindPopup(preset.template(feature.properties)); 
-        }
-      }).addTo(map);
-    });
+    if (options.pointsUrl) {
+      addPointLayer(map, options.pointsUrl, options);
+    }
 
     return map;
   };
@@ -163,13 +183,14 @@
   }
 
   function mapFromElement(el) {
-    var data = elData(el, ['preset', 'alt-popup']);
+    var data = elData(el, ['preset', 'alt-popup', 'points-url']);
 
     if (data.preset) {
       ESDMaps.map(el, data.preset, {
-        altPopup: data['alt-popup']
-      });     
-      
+        altPopup: data['alt-popup'],
+        pointsUrl: data['points-url']
+      });
+
     }
     // @todo: Handle case when there's no preset
   }
@@ -185,15 +206,11 @@
     mapboxId: 'ghing.ExcellentSchoolsDetroit',
     center: L.latLng(42.3484, -83.058),
     zoom: 14,
-    points: '/data/recommended-k-8-schools-2014-spring.json',
-    template: function(fp) {
-      return "<div>" +
-        "<h2>" + fp.schoolname + "</h2>" + 
-        "<p>" + fp.address + "</p>" +
-        "<p>" + fp.city + "," + fp.state + " " + fp.zip + "</p>" +
-        "<a href='" + fp['scorecard-url'] + "' target='_blank'>View Scorecard Profile" +
-        "</div>";
-    }
+    pointsUrl: '/data/recommended-k-8-schools-2014-spring.json',
+    popupTemplate: "<div><h2>{{schoolname}}</h2>" +
+      "<p>{{address}}</p>" +
+      "<p>{{city}}, {{state}} {{zip}}</p>" +
+      "<a href='{{scorecard-url}}' target='_blank'>View Scorecard Profile</a></div>" 
   });
 
   detectMaps();
