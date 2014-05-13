@@ -46,6 +46,8 @@ module.exports = function(grunt) {
     }
 
     properties = getProperties(data, options.properties);
+    properties['marker-size'] = 'small';
+    properties['marker-color'] = data.hexcolor;
 
     return {
       type: "Feature",
