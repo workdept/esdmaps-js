@@ -60,7 +60,7 @@
     for (var i = 0; i < scripts.length; i++) {
       s = scripts[i];
 
-      if (s.src && s.src.match(/esdmaps-embed\.js$/)) {
+      if (s.src && s.src.match(/esdmaps-embed(\.min|)\.js$/)) {
         return s.src;
       }
     }
