@@ -50,7 +50,9 @@ In a situation where users might have trouble remembering to link to the depende
 
 You can create maps purely through the markup API without writing any JavaScript.  This is the first-case API for esdmaps.js.
 
-To create a map, include a ``<div>`` 
+To create a map, create a ``<div>`` element that will act as the map container and configure the map using various ``data-`` attributes.
+
+The container element needs to have a class of ``esdmaps-map`` to be detected and converted to a map.
 
 ## Programmatic API
 
