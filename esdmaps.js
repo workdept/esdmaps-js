@@ -200,12 +200,11 @@
   };
 
   // Register presets
- 
-  // @todo: Update to reflect production MapBox ids and GeoJSON sources
   registerPreset('recommended-schools-k-8-2014', {
-    mapboxId: 'ghing.ExcellentSchoolsDetroit',
+    mapboxId: 'esd.ExcellentSchoolsDetroit',
     center: L.latLng(42.3484, -83.058),
     zoom: 14,
+    // @todo: Update to reflect production GeoJSON URL 
     pointsUrl: '/data/recommended-k-8-schools-2014-spring.json',
     popupTemplate: "<div><h2>{{schoolname}}</h2>" +
       "<p>{{address}}</p>" +
