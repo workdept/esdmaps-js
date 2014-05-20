@@ -2,6 +2,7 @@
   var MAPBOX_JS = '//api.tiles.mapbox.com/mapbox.js/v1.6.2/mapbox.js';
   var MAPBOX_CSS = '//api.tiles.mapbox.com/mapbox.js/v1.6.2/mapbox.css';
   var ESDMAPS_JS = thisURL().replace('esdmaps-embed', 'esdmaps');
+  var ESDMAPS_CSS = ESDMAPS_JS.replace('js', 'css');
 
   function getRemote(url, el, attr, callback) {
     var done = false;
@@ -71,6 +72,8 @@
   if (!hasStylesheet(MAPBOX_CSS)) {
     getStylesheet(MAPBOX_CSS);
   }
+
+  getStylesheet(ESDMAPS_CSS);
 
   if (typeof L == 'undefined' || typeof L.mapbox == 'undefined') {
     getScript(MAPBOX_JS, getESDMapsScript); 

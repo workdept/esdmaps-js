@@ -18,11 +18,20 @@ module.exports = function(grunt) {
           'esdmaps-embed.min.js' : ['esdmaps-embed.js']
         }
       }
+    },
+
+    cssmin: {
+      dist: {
+        files: {
+          'esdmaps.min.css': ['esdmaps.css']
+        }
+      }
     }
   });
 
   grunt.loadTasks('./tasks');
   grunt.loadNpmTasks('grunt-contrib-uglify');
+  grunt.loadNpmTasks('grunt-contrib-cssmin');
 
-  grunt.registerTask('build', ['uglify']);
+  grunt.registerTask('build', ['uglify', 'cssmin']);
 };

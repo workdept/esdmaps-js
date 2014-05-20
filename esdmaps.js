@@ -207,8 +207,8 @@
     // @todo: Update to reflect production GeoJSON URL 
     pointsUrl: '/data/recommended-k-8-schools-2014-spring.json',
     popupTemplate: "<div><h2>{{schoolname}}</h2>" +
-      "<p>{{address}}</p>" +
-      "<p>{{city}}, {{state}} {{zip}}</p>" +
+      "<p>{{address}}<br>" +
+      "{{city}}, {{state}} {{zip}}</p>" +
       "<a href='{{scorecard-url}}' target='_blank'>View Scorecard Profile</a></div>" 
   });
 
