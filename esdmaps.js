@@ -14,9 +14,14 @@
   }
 })(this, function(root, ESDMaps, L) {
   ESDMaps.VERSION = '0.0.1';
+
   var settings = ESDMaps.settings = {
     altPopupClass: 'esdmaps-alt-popup',
-    altPopupOpenClass: 'esdmaps-alt-popup-open'
+    altPopupOpenClass: 'esdmaps-alt-popup-open',
+    // @todo: Wire in production URL
+    // baseUrl: "//http://static.excellentschoolsdetroit.org/libs/esdmaps-js",
+    baseUrl: "",
+    selectedMarkerColor: '#124472'
   };
 
   // Utility functions, so we don't need jQuery
@@ -147,12 +152,26 @@
           else if (typeof options.popupTemplate === "function") {
             layer.bindPopup(options.popupTemplate(feature.properties)); 
           }
+
+          layer.on('popupopen', function(e) {
+            var marker = e.target;
+            marker.feature.properties['old-color'] = marker.feature.properties['marker-color'];
+            marker.feature.properties['marker-color'] = settings.selectedMarkerColor, 
+            marker.setIcon(L.mapbox.marker.icon(marker.feature.properties));
+          });
+
+          layer.on('popupclose', function(e) {
+            var marker = e.target;
+            marker.feature.properties['marker-color'] = marker.feature.properties['old-color'];
+            marker.setIcon(L.mapbox.marker.icon(marker.feature.properties));
+          });
         }
       }).addTo(map);
     });
 
     return map;
   }
+
 
   ESDMaps.map = function(element, _, options) {
     options = options || {};
@@ -204,8 +223,7 @@
     mapboxId: 'esd.ExcellentSchoolsDetroit',
     center: L.latLng(42.3484, -83.058),
     zoom: 14,
-    // @todo: Update to reflect production GeoJSON URL 
-    pointsUrl: '/data/recommended-k-8-schools-2014-spring.json',
+    pointsUrl: settings.baseUrl + '/data/recommended-k-8-schools-2014-spring.json',
     popupTemplate: "<div><h2>{{schoolname}}</h2>" +
       "<p>{{address}}<br>" +
       "{{city}}, {{state}} {{zip}}</p>" +
