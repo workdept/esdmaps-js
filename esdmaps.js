@@ -18,9 +18,7 @@
   var settings = ESDMaps.settings = {
     altPopupClass: 'esdmaps-alt-popup',
     altPopupOpenClass: 'esdmaps-alt-popup-open',
-    // @todo: Wire in production URL
-    // baseUrl: "//http://static.excellentschoolsdetroit.org/libs/esdmaps-js",
-    baseUrl: "",
+    baseUrl: "//static.excellentschoolsdetroit.org/libs/esdmaps-js",
     selectedMarkerColor: '#124472'
   };
 
