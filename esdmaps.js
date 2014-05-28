@@ -16,6 +16,7 @@
   ESDMaps.VERSION = '0.0.1';
 
   var settings = ESDMaps.settings = {
+    mapboxId: 'esd.ExcellentSchoolsDetroit',
     altPopupClass: 'esdmaps-alt-popup',
     altPopupOpenClass: 'esdmaps-alt-popup-open',
     baseUrl: "//static.excellentschoolsdetroit.org/libs/esdmaps-js",
@@ -178,11 +179,12 @@
     var container;
 
     if (!preset) {
-      return L.mapbox.map(element, _, options);
+      map = L.mapbox.map(element, _ || settings.mapboxId, options);
     }
-
-    options = defaults(options, pick(preset, ['zoom', 'center', 'popupTemplate', 'pointsUrl']));
-    map = L.mapbox.map(element, preset.mapboxId, options);
+    else {
+      options = defaults(options, pick(preset, ['zoom', 'center', 'popupTemplate', 'pointsUrl']));
+      map = L.mapbox.map(element, preset.mapboxId, options);
+    }
 
     initAltPopup(map, options);
 
@@ -200,16 +202,21 @@
   }
 
   function mapFromElement(el) {
-    var data = elData(el, ['preset', 'alt-popup', 'points-url']);
+    var data = elData(el, ['preset', 'alt-popup', 'points-url', 'zoom', 'center']);
+    var centerBits;
 
-    if (data.preset) {
-      ESDMaps.map(el, data.preset, {
-        altPopup: data['alt-popup'],
-        pointsUrl: data['points-url']
-      });
-
+    if (data['center']) {
+      centerBits = data['center'].split(',');
+      data['center'] = L.latLng(parseFloat(centerBits[0]),
+                                parseFloat(centerBits[1]));
     }
-    // @todo: Handle case when there's no preset
+
+    ESDMaps.map(el, data.preset, {
+      altPopup: data['alt-popup'],
+      pointsUrl: data['points-url'],
+      zoom: data['zoom'],
+      center: data['center']
+    });
   }
 
   var detectMaps = ESDMaps.detectMaps = function() {
@@ -218,14 +225,17 @@
 
   // Register presets
   registerPreset('recommended-schools-k-8-2014', {
-    mapboxId: 'esd.ExcellentSchoolsDetroit',
+    mapboxId: settings.mapboxId, 
     center: L.latLng(42.3484, -83.058),
-    zoom: 14,
+    zoom: 13,
     pointsUrl: settings.baseUrl + '/data/recommended-k-8-schools-2014-spring.json',
     popupTemplate: "<div><h2>{{schoolname}}</h2>" +
-      "<p>{{address}}<br>" +
-      "{{city}}, {{state}} {{zip}}</p>" +
-      "<a href='{{scorecard-url}}' target='_blank'>View Scorecard Profile</a></div>" 
+      "<p>" +
+      "{{grades}}<br>" +
+      "{{address}}<br>" +
+      "Call: {{phone}}<br>" +
+      "<a href='{{scorecard-url}}' target='_blank'>See more detail</a>" +
+      "</p></div>"
   });
 
   detectMaps();
