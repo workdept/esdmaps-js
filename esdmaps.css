@@ -18,3 +18,15 @@
 }
 
 .esdmaps-map .esdmaps-hover .leaflet-popup-close-button { display: none; }
+
+/* Define some styles as important so they don't get clobbered by page styles. */
+.leaflet-bar a, .leaflet-bar a:hover {
+  color: #404040 !important;
+  color: rgba(0,0,0,.75) !important;
+  border-bottom: 1px solid #ddd !important;
+  border-bottom-color: rgba(0,0,0,.1) !important;
+}
+
+.leaflet-popup-close-button {
+  border-bottom: none !important;
+}
