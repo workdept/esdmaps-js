@@ -189,12 +189,14 @@
         popup.setContent(renderTemplate(options.hoverPopupTemplate, e.target.feature.properties));
       }
       e.target.openPopup();
+      L.DomUtil.addClass(popup._container, 'esdmaps-hover');
     });
 
     layer.on('mouseout', function(e) {
       if (e.target._hovering) {
         e.target._hovering = false;
         e.target.closePopup();
+        L.DomUtil.removeClass(popup._container, 'esdmaps-hover');
       }
     });
 
@@ -206,8 +208,10 @@
         e.target._hovering = false;
         if (options.hoverPopupTemplate) {
           popup.setContent(renderTemplate(options.popupTemplate, e.target.feature.properties));
+          console.debug(popup.options);
         }
         e.target.openPopup();
+        L.DomUtil.removeClass(popup._container, 'esdmaps-hover');
       }
     });
   }
@@ -301,7 +305,7 @@
       "<a href='{{scorecard-url}}' target='_blank'>See more detail</a>" +
       "</p></div>",
      showPopupOnHover: true,
-     hoverPopupTemplate: "<div class='hover-popup'><h2>{{schoolname}}</h2></div>"
+     hoverPopupTemplate: "<h2>{{schoolname}}</h2>"
   });
 
   detectMaps();
