@@ -92,3 +92,37 @@ If nothing is specified for this option, a ``<div>`` element with an id of ``esd
 **Data attribute**: points-url
 
 URL of GeoJSON source containing point data.
+
+### center
+
+**Data attribute**: data-center
+
+L.latLng object representing the initial center of the map.  When
+specified as a data attribute, specify this option as a
+comma-separated string:
+
+```
+<div id="map" class="esdmaps-map" data-preset="recommended-schools-k-8-2014" data-points-url="/data/recommended-k-8-schools-2014-spring.json" data-center="42.43686276,-83.1611874" data-zoom="15"></div>
+```
+
+### zoom
+
+**Data attribute**: zoom
+
+Integer representing the initial zoom level of the map.
+
+## Preset Options
+
+### popupTemplate
+
+A string representing a Mustache template, or a template function that takes a context object as an argument, for the popup contents.  This template will be rendered with the feature properties from the GeoJSON as the template context.
+
+### popupOnHover
+
+True if popups should be shown on hover as well as click.
+
+### hoverPopupTemplate
+
+A string representing a Mustache template, or a template function that takes a context object as an argument, for the hover popup contents.  This template will be rendered with the feature properties from the GeoJSON as the template context.
+
+If this is not specified, the normal popup content is shown on hover.

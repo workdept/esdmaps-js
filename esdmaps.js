@@ -145,12 +145,7 @@
         pointToLayer: L.mapbox.marker.style,
         style: function(feature) { return feature.properties; },
         onEachFeature: function(feature, layer) {
-          if (typeof options.popupTemplate === "string") {
-            layer.bindPopup(L.mapbox.template(options.popupTemplate, feature.properties));
-          }
-          else if (typeof options.popupTemplate === "function") {
-            layer.bindPopup(options.popupTemplate(feature.properties)); 
-          }
+          layer.bindPopup(renderTemplate(options.popupTemplate, feature.properties));
 
           layer.on('popupopen', function(e) {
             var marker = e.target;
@@ -164,11 +159,80 @@
             marker.feature.properties['marker-color'] = marker.feature.properties['old-color'];
             marker.setIcon(L.mapbox.marker.icon(marker.feature.properties));
           });
+
+          if (options.showPopupOnHover) {
+            initHoverPopup(layer, options);
+          }
         }
       }).addTo(map);
     });
 
     return map;
+  }
+
+  /**
+   * Connect event handlers to show different popup content on hover
+   * and click.
+   *
+   * @param layer {L.Layer} - Marker layer
+   * @param options.popupTemplate {(string|function)} - Template that will be
+   *   used to render the popup content on click.
+   * @param [options.hoverPopupTemplate] {(string|function)} - Template that
+   *   will be used to render the popup content on hover. If not specified
+   *   the normal popup content is used.
+   */
+  function initHoverPopup(layer, options) {
+    layer.on('mouseover', function(e) {
+      var popup = e.target.getPopup();
+      e.target._hovering = true;
+      if (options.hoverPopupTemplate) {
+        popup.setContent(renderTemplate(options.hoverPopupTemplate, e.target.feature.properties));
+      }
+      e.target.openPopup();
+    });
+
+    layer.on('mouseout', function(e) {
+      if (e.target._hovering) {
+        e.target._hovering = false;
+        e.target.closePopup();
+      }
+    });
+
+    layer.on('click', function(e) {
+      var popup;
+
+      if (e.target._hovering) {
+        popup = e.target.getPopup();
+        e.target._hovering = false;
+        if (options.hoverPopupTemplate) {
+          popup.setContent(renderTemplate(options.popupTemplate, e.target.feature.properties));
+        }
+        e.target.openPopup();
+      }
+    });
+  }
+
+  /**
+   * Render a template.
+   *
+   * @param tpl {(string|function}) - A Mustache template string or a template
+   *   function.  If a string is provided, the template will be
+   *   rendered using L.mapbox.template().
+   * @param ctx {object} - An object representing the template
+   *   context.  It contains key/value pairs corresponding to values 
+   *   referenced in the template.
+   * @returns {string} The rendered template.
+   */
+  function renderTemplate(tpl, ctx) {
+    if (typeof tpl === "string") {
+      return L.mapbox.template(tpl, ctx);
+    }
+    else if (typeof tpl === "function") {
+      return tpl(ctx);
+    }
+    else {
+      return "";
+    }
   }
 
 
@@ -182,7 +246,7 @@
       map = L.mapbox.map(element, _ || settings.mapboxId, options);
     }
     else {
-      options = defaults(options, pick(preset, ['zoom', 'center', 'popupTemplate', 'pointsUrl']));
+      options = defaults(options, pick(preset, ['zoom', 'center', 'popupTemplate', 'pointsUrl', 'showPopupOnHover', 'hoverPopupTemplate']));
       map = L.mapbox.map(element, preset.mapboxId, options);
     }
 
@@ -235,7 +299,9 @@
       "{{address}}<br>" +
       "Call: {{phone}}<br>" +
       "<a href='{{scorecard-url}}' target='_blank'>See more detail</a>" +
-      "</p></div>"
+      "</p></div>",
+     showPopupOnHover: true,
+     hoverPopupTemplate: "<div class='hover-popup'><h2>{{schoolname}}</h2></div>"
   });
 
   detectMaps();
