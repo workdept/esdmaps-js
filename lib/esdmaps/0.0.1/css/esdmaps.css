@@ -16,3 +16,5 @@
 .esdmaps-map .leaflet-popup-content-wrapper {
   box-shadow: 3px 3px 5px 0 #ccc;
 }
+
+.esdmaps-map .hover-popup h2 { padding-top: 4px; }
